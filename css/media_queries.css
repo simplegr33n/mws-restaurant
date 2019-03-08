@@ -1,14 +1,84 @@
 /* 1 item */
-@media screen and (min-width: 500px) {
-    nav {background-color: rgb(22, 180, 70)}
+@media screen and (min-width: 0px) and (max-width: 1000px) {
+    #restaurants-list li {
+        width: 90%;
+        min-width: 90%;
+    }
+    .leaflet-touch .leaflet-bar a {
+        font-size: 44px;
+        min-width: 60px;
+        min-height: 60px;
+        line-height: 60px !important;
+    }
+    .filter-options select {
+        font-size: 22pt;
+    }
+    nav h1 a {
+        font-size: 28pt;
+    }
+    .filter-options h2 {
+        font-size: 24pt;
+    }
+    #restaurants-list li a {
+        font-size: 24pt;
+    }
 }
 
 /* 2 items */
-@media screen and (min-width: 800px) {
-    nav {background-color: rgb(149, 143, 235)}
+@media screen and (min-width: 1000px) {
+    #restaurants-list li {
+        width: 40%;
+        min-width: 40%;
+    }
+    #restaurants-list li h1 {
+        font-size: 1.4em;
+    }
+    #restaurants-list li a {
+        font-size: 1.0em;
+    }
+    .leaflet-touch .leaflet-bar a {
+        font-size: 32px;
+        min-width: 40px;
+        min-height: 40px;
+        line-height: 40px !important;
+    }
+    .filter-options select {
+        font-size: 18pt;
+    }
+    .filter-options h2 {
+        font-size: 20pt;
+    }
+    nav h1 a {
+        font-size: 24pt;
+    }
+    #restaurants-list li a {
+        font-size: 20pt;
+    }
 }
 
 /* 3 items */
-@media screen and (min-width: 1100px) {
-    nav {background-color: rgb(180, 72, 22)}
+@media screen and (min-width: 1200px) {
+    #restaurants-list li {
+        width: 25%;
+        min-width: 25%;
+    }
+    #restaurants-list li h1 {
+        font-size: 1.4em;
+    }
+    #restaurants-list li a {
+        font-size: 1.0em;
+    }
+    .leaflet-touch .leaflet-bar a {
+        font-size: 22px;
+        min-width: 30px;
+        min-height: 30px;
+        line-height: 30px !important;
+    }
+    .filter-options h2 {
+        font-size: 16pt;
+    }
+    #restaurants-list li a {
+        font-size: 16pt;
+    }
+
 }
