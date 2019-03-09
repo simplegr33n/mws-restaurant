@@ -1,4 +1,23 @@
-@media screen and (min-width: 0px) and (max-width: 1000px) {
+@media screen and (min-width: 0px) and (max-width: 400px) {
+    /* Main Page - 1 item - close*/
+    .leaflet-touch .leaflet-bar a {
+        font-size: 64x;
+        min-width: 80px;
+        min-height: 80px;
+        line-height: 80px !important;
+    }
+
+    #breadcrumb li {
+        font-size: 20pt;
+    }
+    /* Add a color to all links inside the list */
+    #breadcrumb li a {
+        font-size: 20pt;
+    }
+
+}
+
+@media screen and (min-width: 400px) {
     /* Main Page - 1 item */
     #restaurants-list li {
         width: 90%;
@@ -22,7 +41,21 @@
     #restaurants-list li a {
         font-size: 24pt;
     }
-    /* Details Page */
+    #restaurants-list p {
+        font-size: 16pt;
+    }
+    #restaurants-list li h1 {
+        font-size: 32pt;
+    }
+
+    #breadcrumb li {
+        font-size: 20pt;
+    }
+    /* Add a color to all links inside the list */
+    #breadcrumb li a {
+        font-size: 20pt;
+    }
+
 }
 
 @media screen and (min-width: 1000px) {
@@ -55,6 +88,17 @@
     #restaurants-list li a {
         font-size: 20pt;
     }
+    #restaurants-list li h1 {
+        font-size: 26pt;
+    }
+
+    #breadcrumb li {
+        font-size: 16pt;
+    }
+    /* Add a color to all links inside the list */
+    #breadcrumb li a {
+        font-size: 16pt;
+    }
 }
 
 @media screen and (min-width: 1200px) {
@@ -83,27 +127,28 @@
     }
 }
 
-    /* Details Page */
-    @media screen and (max-width: 1050px) {
+/* Details Page */
+@media screen and (max-width: 1050px) {
 
-        #restaurant-container {
-            flex-direction: column;
-        }
-
-        #restaurant-img {
-            width: 100%;
-        }
-
-        td {
-            font-size: 32pt;
-        }
-
-        #restaurant-name {
-            font-size: 32pt;
-        }
-
-        #restaurant-address {
-            font-size: 20pt;
-        }
-
+    #restaurant-container {
+        flex-direction: column;
     }
+
+    #restaurant-img {
+        width: 100%;
+    }
+
+    td {
+        font-size: 32pt;
+    }
+
+    #restaurant-name {
+        font-size: 32pt;
+    }
+
+    #restaurant-address {
+        font-size: 20pt;
+    }
+
+}
+
