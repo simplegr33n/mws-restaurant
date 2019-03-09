@@ -1,5 +1,5 @@
-/* 1 item */
 @media screen and (min-width: 0px) and (max-width: 1000px) {
+    /* Main Page - 1 item */
     #restaurants-list li {
         width: 90%;
         min-width: 90%;
@@ -22,10 +22,11 @@
     #restaurants-list li a {
         font-size: 24pt;
     }
+    /* Details Page */
 }
 
-/* 2 items */
 @media screen and (min-width: 1000px) {
+    /* Main Page - 2 items */
     #restaurants-list li {
         width: 40%;
         min-width: 40%;
@@ -56,8 +57,8 @@
     }
 }
 
-/* 3 items */
 @media screen and (min-width: 1200px) {
+    /* Main Page - 3 items */
     #restaurants-list li {
         width: 25%;
         min-width: 25%;
@@ -80,5 +81,29 @@
     #restaurants-list li a {
         font-size: 16pt;
     }
-
 }
+
+    /* Details Page */
+    @media screen and (max-width: 1050px) {
+
+        #restaurant-container {
+            flex-direction: column;
+        }
+
+        #restaurant-img {
+            width: 100%;
+        }
+
+        td {
+            font-size: 32pt;
+        }
+
+        #restaurant-name {
+            font-size: 32pt;
+        }
+
+        #restaurant-address {
+            font-size: 20pt;
+        }
+
+    }
