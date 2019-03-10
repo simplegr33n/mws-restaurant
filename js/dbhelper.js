@@ -150,8 +150,16 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}`);
+    return (`/dist/img/${restaurant.photograph}`);
   }
+
+    /**
+   * Restaurant Image Srcset.
+   */
+  static imageSrcsetForRestaurant(restaurant) {
+    return (`${restaurant.srcset_restaurant}`);
+  }
+
 
   /**
    * Map marker for a restaurant.
@@ -166,6 +174,8 @@ class DBHelper {
       marker.addTo(newMap);
     return marker;
   } 
+
+
 
 }
 

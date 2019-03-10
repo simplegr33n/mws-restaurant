@@ -194,11 +194,9 @@ nav h1 a {
 
 #restaurants-list .restaurant-img {
 	background-color: #ccc;
-	display: block;
+	display: cover;
 	margin: 0;
 	max-width: 100%;
-	min-height: 248px;
-	min-width: 100%;
 }
 
 #restaurants-list li h1 {
@@ -381,3 +379,9 @@ nav h1 a {
 	display: none;
 }
 
+
+/* ====================== leaflet ====================== */
+
+.leaflet-top .leaflet-control {
+    margin-top: 15px !important;
+}
