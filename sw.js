@@ -1,4 +1,4 @@
-const staticCacheName = 'restaurant-cache-002';
+const staticCacheName = 'restaurant-cache-001';
 
 // list of assets to cache on install
 // cache each restaurant detail page as well
@@ -15,16 +15,16 @@ self.addEventListener('install', event => {
                     '/js/dbhelper.js',
                     '/js/main.js',
                     '/js/restaurant_info.js',
-                    '/img/1.jpg',
-                    '/img/2.jpg',
-                    '/img/3.jpg',
-                    '/img/4.jpg',
-                    '/img/5.jpg',
-                    '/img/6.jpg',
-                    '/img/7.jpg',
-                    '/img/8.jpg',
-                    '/img/9.jpg',
-                    '/img/10.jpg',
+                    '/dist/img/1-300.jpg',
+                    '/dist/img/2-300.jpg',
+                    '/dist/img/3-300.jpg',
+                    '/dist/img/4-300.jpg',
+                    '/dist/img/5-300.jpg',
+                    '/dist/img/6-300.jpg',
+                    '/dist/img/7-300.jpg',
+                    '/dist/img/8-300.jpg',
+                    '/dist/img/9-300.jpg',
+                    '/dist/img/10-300.jpg',
                     '/js/register_sw.js'
                 ]).catch(error => {
                     console.log('Caches open failed: ' + error);
