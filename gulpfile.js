@@ -2,6 +2,10 @@ const gulp = require('gulp');
 const size = require('gulp-size');
 const babel = require('gulp-babel');
 const terser = require('gulp-terser');
+const babelify = require('babelify');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
 const del = require('del');
 const browserSync = require('browser-sync').create();
 
@@ -39,7 +43,7 @@ gulp.task('css', () => {
 gulp.task('js', () => {
     return gulp.src(paths.srcJS)
         .pipe(babel())                      // transpiles js
-        .pipe(terser())                     // minifies js
+        .pipe(terser())                     // condense & minify
         .pipe(size({ title: 'scripts' }))   // logs file size
         .pipe(gulp.dest(paths.tmp));
 });
@@ -50,6 +54,19 @@ gulp.task('clean', (done) => {
     del(['tmp/*', 'dist/*']);
     done();
 });
+// Service Worker Task
+gulp.task('sw', () => {
+    var bundler = browserify('./app/sw.js'); // ['1.js', '2.js']
+  
+    return bundler
+      .transform(babelify)    // transpiles to ES5
+      .bundle()               // combines code
+      .pipe(source('sw.js'))  // get text stream; set destination filename
+      .pipe(buffer())         // buffer stream for use with terser
+      .pipe(terser())         // condense & minify
+      .pipe(size())           // logs file size
+      .pipe(gulp.dest(paths.tmp));
+  });
 
 
 // BUILD / SERVE / WATCH - GULP TASKS
