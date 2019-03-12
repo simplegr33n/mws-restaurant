@@ -26,11 +26,13 @@ const paths = {
 // HTML output to tmp
 gulp.task('html', () => {
     return gulp.src(paths.srcHTML)
+    .pipe(size({ title: 'html' }))   // logs file size
         .pipe(gulp.dest(paths.tmp));
 });
 // CSS output to tmp
 gulp.task('css', () => {
     return gulp.src(paths.srcCSS)
+        .pipe(size({ title: 'css' }))   // logs file size
         .pipe(gulp.dest(paths.tmp));
 });
 // JS output to tmp
@@ -44,8 +46,9 @@ gulp.task('js', () => {
 // Copy task runs html/css/js to tmp tasks
 gulp.task('copy', gulp.series('html', 'css', 'js'));
 // Empty output directories with del
-gulp.task('clean', () => {
+gulp.task('clean', (done) => {
     del(['tmp/*', 'dist/*']);
+    done();
 });
 
 
