@@ -1,4 +1,6 @@
 const gulp = require('gulp');
+var gulpLoadPlugins = require('gulp-load-plugins');
+const responsive = require('gulp-responsive');
 const size = require('gulp-size');
 const babel = require('gulp-babel');
 const terser = require('gulp-terser');
@@ -8,6 +10,8 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const del = require('del');
 const browserSync = require('browser-sync').create();
+
+const $ = gulpLoadPlugins();
 
 const paths = {
     src: 'app/**/*', // source directory
@@ -27,19 +31,19 @@ const paths = {
 };
 
 // UTILITY - GULP TASKS
-// HTML output to tmp
+// HTML output task
 gulp.task('html', () => {
     return gulp.src(paths.srcHTML)
-    .pipe(size({ title: 'html' }))   // logs file size
+        .pipe(size({ title: 'html' }))   // logs file size
         .pipe(gulp.dest(paths.tmp));
 });
-// CSS output to tmp
+// CSS output task
 gulp.task('css', () => {
     return gulp.src(paths.srcCSS)
         .pipe(size({ title: 'css' }))   // logs file size
         .pipe(gulp.dest(paths.tmp));
 });
-// JS output to tmp
+// JS output task
 gulp.task('js', () => {
     return gulp.src(paths.srcJS)
         .pipe(babel())                      // transpiles js
@@ -47,31 +51,50 @@ gulp.task('js', () => {
         .pipe(size({ title: 'scripts' }))   // logs file size
         .pipe(gulp.dest(paths.tmp));
 });
-// Copy task runs html/css/js to tmp tasks
+// Copy task
 gulp.task('copy', gulp.series('html', 'css', 'js'));
-// Empty output directories with del
+// Empty output directories task
 gulp.task('clean', (done) => {
     del(['tmp/*', 'dist/*']);
     done();
 });
-// Service Worker Task
+// Responsive Image Build task
+gulp.task('images', () => {
+    return gulp.src('app/img/*.jpg')
+        .pipe(responsive({
+            '*.jpg': [
+                { width: 300, rename: { suffix: '-300w' }, },
+                { width: 400, rename: { suffix: '-400w' }, },
+                { width: 600, rename: { suffix: '-600w' }, },
+                { width: 800, rename: { suffix: '-800w' }, }
+            ]
+        }, {
+                quality: 30,
+                progressive: true,
+                withMetadata: false,
+            }))
+        .pipe(gulp.dest('tmp/img'))
+        .pipe(gulp.dest('dist/img'));
+});
+
+// Service Worker task
 gulp.task('sw', () => {
-    var bundler = browserify('./app/sw.js'); // ['1.js', '2.js']
-  
+    var bundler = browserify('./app/sw.js'); 
+
     return bundler
-      .transform(babelify)    // transpiles to ES5
-      .bundle()               // combines code
-      .pipe(source('sw.js'))  // get text stream; set destination filename
-      .pipe(buffer())         // buffer stream for use with terser
-      .pipe(terser())         // condense & minify
-      .pipe(size())           // logs file size
-      .pipe(gulp.dest(paths.tmp));
-  });
+        .transform(babelify)    // transpiles to ES5
+        .bundle()               // combines code
+        .pipe(source('sw.js'))  // get text stream; set destination filename
+        .pipe(buffer())         // buffer stream for use with terser
+        .pipe(terser())         // condense & minify
+        .pipe(size())           // logs file size
+        .pipe(gulp.dest(paths.tmp));
+});
 
 
 // BUILD / SERVE / WATCH - GULP TASKS
 // Build
-gulp.task('default', gulp.series('copy', 'js'));
+gulp.task('default', gulp.series('images', 'copy'));
 
 // Serve site and watch js
 gulp.task('serve', () => {
@@ -84,7 +107,7 @@ gulp.task('serve', () => {
 });
 
 // Build site, output js, serve (and watch js)
-gulp.task('build:serve', gulp.series('copy', 'js', 'serve'));
+gulp.task('build:serve', gulp.series('images', 'copy', 'serve'));
 
 // Series 'js-watch' after 'js' completes before browserSync reload
 gulp.task('js-watch', gulp.series('js'), (done) => {
