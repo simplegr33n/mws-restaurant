@@ -1,4 +1,4 @@
-const staticCacheName = 'restaurant-cache-001';
+const staticCacheName = 'restaurant-cache-002';
 
 // list of assets to cache on install
 // cache each restaurant detail page as well
