@@ -1,0 +1,35 @@
+{
+  "name": "mws-restaurant",
+  "version": "1.0.0",
+  "description": "Three Stage Course Material Project - Restaurant Reviews",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "browser-sync": "^2.26.3",
+    "del": "^4.0.0",
+    "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0",
+    "idb": "^3.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "gulp-size": "^3.0.0",
+    "gulp-terser": "^1.1.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp build:serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplegr33n/mws-restaurant.git"
+  },
+  "author": "Geoff Golda <ggdev3@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simplegr33n/mws-restaurant/issues"
+  },
+  "homepage": "https://github.com/simplegr33n/mws-restaurant#readme"
+}
