@@ -1,4 +1,4 @@
-const staticCacheName = 'restaurant-cache-007';
+const staticCacheName = 'restaurant-cache-010';
 
 // list of assets to cache on install
 // cache each restaurant detail page as well
@@ -50,46 +50,27 @@ self.addEventListener('activate', function (event) {
     );
 });
 
-self.addEventListener('fetch', event => {
-    const request = event.request;
-    const requestUrl = new URL(request.url);
-
-    if (requestUrl.port === '1337') {
-        event.respondWith(idbResponse(request));
-    } else {
-        event.respondWith(cacheResponse(request));
-    }
-});
-
-
-function cacheResponse(request) {
-    return caches.match(request).then(cacheResponse => {
-        return cacheResponse || fetch(request).then(fetchResponse => { // Return cacheResponse or fetch if undefined
-            return caches.open(staticCacheName).then(cache => {
-                if (!fetchResponse.url.includes('browser-sync')) {  // Filter browser-sync resources to prevent error
-                    cache.put(request, fetchResponse.clone()); // Send Clone to Cache (original response can only be used once)
-                }
-                return fetchResponse; // Send fetch Original to browser
+self.addEventListener('fetch', function(event) {
+    // console.log("Service Worker starting fetch");
+    event.respondWith(
+      caches.open(staticCacheName).then(function(cache) {
+        return cache.match(event.request).then(function (response) {
+          if (response) {
+            // console.log("data fetched from cache");
+            return response;
+          }
+          else {
+            return fetch(event.request).then(function(networkResponse) {
+              // console.log("data fetched from network", event.request.url);
+              //cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            }).catch(function(error) {
+              console.log("Unable to fetch data from network", event.request.url, error);
             });
+          }
         });
-    }).catch(error => new Response(error));
-}
-
-function idbResponse(request) {
-    return idbKeyVal.get('restaurants').then(restaurants => {
-        return (
-            restaurants || fetch(request)
-                .then(fetchResponse => fetchResponse.json())
-                .then(jsonResponse => {
-                    idbKeyVal.set('restaurants', jsonResponse);
-                    return jsonResponse;
-                })
-        );
-    }).then(response => new Response(JSON.stringify(response)))
-        .catch(error => {
-            return new Response(error, {
-                status: 404,
-                statusText: 'Request Error: 404'
-            });
-        });
-}
+      }).catch(function(error) {
+        console.log("Something went wrong with Service Worker fetch intercept", error);
+      })
+    );
+  });
