@@ -72,7 +72,7 @@ gulp.task('js', () => {
 gulp.task('copy', gulp.series('html', 'css', 'js'));
 // Empty output directories task
 gulp.task('clean', (done) => {
-    del(['.tmp/*.jpeg', 'dist/*.jpeg', 'dist/static/*', '.tmp/static/*']);
+    del(['.tmp/**/*.jpeg', 'dist/**/*.jpeg', 'dist/img/static/*', '.tmp/img/static/*', 'dist/**/*.html', 'dist/**/*.js', 'dist/**/*.css', '.tmp/**/*.html', '.tmp/**/*.js', '.tmp/**/*.css']);
     done();
 });
 
