@@ -243,5 +243,10 @@ gulp.task('dist', function () {
     gulp.watch(['app/sw.js'], gulp.series('sw', reload));
 });
 
-// .dist - Build site, output js, serve (and watch js)
-gulp.task('dist:serve', gulp.series('default', 'dist'));
+gulp.task('app:serve', function () {
+    browserSync.init({
+        server: 'app',
+        port: 8000
+    });
+});
+

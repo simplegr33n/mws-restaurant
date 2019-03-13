@@ -1,4 +1,4 @@
-const staticCacheName = 'restaurant-cache-005';
+const staticCacheName = 'restaurant-cache-007';
 
 // list of assets to cache on install
 // cache each restaurant detail page as well
@@ -50,24 +50,46 @@ self.addEventListener('activate', function (event) {
     );
 });
 
-self.addEventListener('fetch',
-    function (event) {
-        event.respondWith(caches.match(event.request)
-            .then(function (response) {
-                if (response !== undefined) {
-                    return response;
-                } else {
-                    return fetch(event.request).then
-                        (function (response) {
-                            let responseClone = response.clone();
-                            caches.open(staticCacheName)
-                                .then
-                                (function (cache) {
-                                    cache.put(event.request, responseClone);
-                                });
-                            return response;
-                        });
+self.addEventListener('fetch', event => {
+    const request = event.request;
+    const requestUrl = new URL(request.url);
+
+    if (requestUrl.port === '1337') {
+        event.respondWith(idbResponse(request));
+    } else {
+        event.respondWith(cacheResponse(request));
+    }
+});
+
+
+function cacheResponse(request) {
+    return caches.match(request).then(cacheResponse => {
+        return cacheResponse || fetch(request).then(fetchResponse => { // Return cacheResponse or fetch if undefined
+            return caches.open(staticCacheName).then(cache => {
+                if (!fetchResponse.url.includes('browser-sync')) {  // Filter browser-sync resources to prevent error
+                    cache.put(request, fetchResponse.clone()); // Send Clone to Cache (original response can only be used once)
                 }
-            }) // end of cache match promise
-        ); // end of respond with
-    });
+                return fetchResponse; // Send fetch Original to browser
+            });
+        });
+    }).catch(error => new Response(error));
+}
+
+function idbResponse(request) {
+    return idbKeyVal.get('restaurants').then(restaurants => {
+        return (
+            restaurants || fetch(request)
+                .then(fetchResponse => fetchResponse.json())
+                .then(jsonResponse => {
+                    idbKeyVal.set('restaurants', jsonResponse);
+                    return jsonResponse;
+                })
+        );
+    }).then(response => new Response(JSON.stringify(response)))
+        .catch(error => {
+            return new Response(error, {
+                status: 404,
+                statusText: 'Request Error: 404'
+            });
+        });
+}
