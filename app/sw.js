@@ -50,27 +50,25 @@ self.addEventListener('activate', function (event) {
     );
 });
 
-self.addEventListener('fetch', function(event) {
-    // console.log("Service Worker starting fetch");
+self.addEventListener('fetch', function (event) {
     event.respondWith(
-      caches.open(staticCacheName).then(function(cache) {
-        return cache.match(event.request).then(function (response) {
-          if (response) {
-            // console.log("data fetched from cache");
-            return response;
-          }
-          else {
-            return fetch(event.request).then(function(networkResponse) {
-              // console.log("data fetched from network", event.request.url);
-              //cache.put(event.request, networkResponse.clone());
-              return networkResponse;
-            }).catch(function(error) {
-              console.log("Unable to fetch data from network", event.request.url, error);
+        caches.open(staticCacheName).then((cache) => {
+            return cache.match(event.request).then((response) => {
+                if (response) {
+                    return response;
+                } else {
+                    return fetch(event.request).then((networkResponse) => {
+                        if (!fetchResponse.url.includes('browser-sync')) { // Prevent error
+                            cache.put(event.request, fetchResponse.clone()); // put clone in cache
+                        }
+                        return networkResponse;
+                    }).catch((error) => {
+                        console.log("Service Worker unable to fetch network data", event.request.url, error);
+                    });
+                }
             });
-          }
-        });
-      }).catch(function(error) {
-        console.log("Something went wrong with Service Worker fetch intercept", error);
-      })
+        }).catch((error) => {
+            console.log("Service Worker Intercept Error", error);
+        })
     );
-  });
+});

@@ -1,7 +1,7 @@
 /**
  * Indexed DB - https://github.com/jakearchibald/idb
  */
-const idbApp = (function() {
+const idbApp = (function () {
 	'use strict';
 
 	// Check Browser Support
@@ -22,20 +22,12 @@ const idbApp = (function() {
 		}
 	});
 
-	function addAllRestaurants() {
+	function addAllRestaurants(restaurants) {
 		console.log("adding all restaurants");
-		fetch(DBHelper.DATABASE_RESTAURANTS_URL).then((response) => {response.json()}).then(function (restaurants) { 
-			dbPromise.then((db) => {
-				if (!db) return;
-				restaurants.forEach((restaurant) => {
-					addRestaurantById(restaurant) // put the JSON restaurants in store 
-				});
-			});
-			callback(null, restaurants); // return json
-		})
-			.catch(function (err) {
-				console.log("Failed adding restaurant to IndexedDB", error);
-			});
+		restaurants.forEach((restaurant) => {
+			addRestaurantById(restaurant) // put the JSON restaurants in store 
+		});
+
 	}
 
 	function addRestaurantById(restaurant) {
@@ -94,6 +86,7 @@ class DBHelper {
 			.then(response => response.json())
 			.then(function (jsonResponse) {
 				console.log("Fetched restaurants!");
+				idbApp.addAllRestaurants(jsonResponse);
 				callback(null, jsonResponse);
 			})
 			.catch(function (error) {
