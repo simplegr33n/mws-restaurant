@@ -1,7 +1,7 @@
 /**
  * Indexed DB - https://github.com/jakearchibald/idb
  */
-const idbApp = () => {
+const idbApp = (function() {
 	'use strict';
 
 	// Check Browser Support
@@ -24,15 +24,11 @@ const idbApp = () => {
 
 	function addAllRestaurants() {
 		console.log("adding all restaurants");
-		fetch(DBHelper.DATABASE_RESTAURANTS_URL).then((response) => {
-			return response.json();
-		}).then(function (restaurants) { // put the JSON restaurants in store 
+		fetch(DBHelper.DATABASE_RESTAURANTS_URL).then((response) => {response.json()}).then(function (restaurants) { 
 			dbPromise.then((db) => {
 				if (!db) return;
-				var tx = db.transaction('restaurants', 'readwrite');
-				var store = tx.objectStore('restaurants');
 				restaurants.forEach((restaurant) => {
-					store.put(restaurant)
+					addRestaurantById(restaurant) // put the JSON restaurants in store 
 				});
 			});
 			callback(null, restaurants); // return json
@@ -66,13 +62,14 @@ const idbApp = () => {
 		});
 	}
 
+
 	return {
 		dbPromise: (dbPromise),
 		addRestaurantById: (addRestaurantById),
 		addAllRestaurants: (addAllRestaurants),
 		fetchRestaurantById: (fetchRestaurantById),
 	};
-};
+})();
 
 /**
  * Common database helper functions.
@@ -92,6 +89,7 @@ class DBHelper {
 	 * Fetch all restaurants.
 	 */
 	static fetchRestaurants(callback) {
+
 		fetch(DBHelper.DATABASE_URL)
 			.then(response => response.json())
 			.then(function (jsonResponse) {
