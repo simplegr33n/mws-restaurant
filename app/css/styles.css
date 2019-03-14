@@ -333,7 +333,7 @@ nav h1 a {
 }
 
 #restaurant-name {
-	color: #f18200;
+	color: #8f520d;
 	font-family: Arial, sans-serif;
 	font-size: 18pt;
 	font-weight: 200;
@@ -443,8 +443,14 @@ nav h1 a {
 	border: 2px solid #ccc;
 }
 
-/* ====================== Aria====================== */
+/* ====================== Aria ====================== */
 
 .aria-label {
 	display: none;
+}
+
+/* ====================== Leaflet ====================== */
+
+.leaflet-container a {
+    color: rgb(7, 47, 63) !important;
 }
