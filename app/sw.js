@@ -1,4 +1,8 @@
-const staticCacheName = 'restaurant-cache-010';
+const staticCacheName = 'restaurant-cache-019';
+// Note: use following command in devtools console to force unreigstration of current service worker 
+//////
+////// navigator.serviceWorker.getRegistration().then(function(r){r.unregister();});
+//////
 
 // list of assets to cache on install
 // cache each restaurant detail page as well
@@ -52,23 +56,25 @@ self.addEventListener('activate', function (event) {
 
 self.addEventListener('fetch', function (event) {
     event.respondWith(
-        caches.open(staticCacheName).then((cache) => {
-            return cache.match(event.request).then((response) => {
+        caches.open(staticCacheName).then(function (cache) {
+            return cache.match(event.request).then(function (response) {
                 if (response) {
                     return response;
-                } else {
-                    return fetch(event.request).then((networkResponse) => {
-                        if (!fetchResponse.url.includes('browser-sync')) { // Prevent error
-                            cache.put(event.request, fetchResponse.clone()); // put clone in cache
+                }
+                else {
+                    return fetch(event.request).then(function (networkResponse) {
+                        // console.log(`networkResponse.url:: ${networkResponse.url}`);
+                        if (!networkResponse.url.includes('browser-sync')) {
+                            cache.put(event.request, networkResponse.clone());
                         }
                         return networkResponse;
-                    }).catch((error) => {
-                        console.log("Service Worker unable to fetch network data", event.request.url, error);
+                    }).catch(function (error) {
+                        console.log("Unable to fetch data from network", event.request.url, error);
                     });
                 }
             });
-        }).catch((error) => {
-            console.log("Service Worker Intercept Error", error);
+        }).catch(function (error) {
+            console.log("Something went wrong with Service Worker fetch intercept", error);
         })
     );
 });

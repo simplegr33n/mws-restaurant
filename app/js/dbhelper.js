@@ -18,12 +18,11 @@ const idbApp = (function () {
 		switch (upgradeDb.oldVersion) {
 			case 0:
 				upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
-				addAllRestaurants();
 		}
 	});
 
 	function addAllRestaurants(restaurants) {
-		console.log("adding all restaurants");
+		//console.log("adding all restaurants");
 		restaurants.forEach((restaurant) => {
 			addRestaurantById(restaurant) // put the JSON restaurants in store 
 		});
@@ -85,7 +84,7 @@ class DBHelper {
 		fetch(DBHelper.DATABASE_URL)
 			.then(response => response.json())
 			.then(function (jsonResponse) {
-				console.log("Fetched restaurants!");
+				//console.log("Fetched restaurants!");
 				idbApp.addAllRestaurants(jsonResponse);
 				callback(null, jsonResponse);
 			})
