@@ -148,13 +148,13 @@ createRestaurantHTML = (restaurant) => {
 
   const image = document.createElement('img');
   image.className = 'restaurant-img';
-  image.alt = ""
+  image.alt = restaurant.name + ' image';
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
   // image.srcset = DBHelper.imageSrcsetForRestaurant(restaurant);
   // image.sizes = "600px";
   li.append(image);
 
-  const name = document.createElement('h1');
+  const name = document.createElement('h2');
   name.innerHTML = restaurant.name;
   li.append(name);
 
@@ -189,5 +189,3 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 
 } 
-
-
