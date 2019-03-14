@@ -1,0 +1,17 @@
+{
+    "name": "Udacity Restaurant Reviews App",
+    "short_name": "Food Reviews",
+    "theme_color": "#790a0a",
+    "background_color": "#262932",
+    "display": "standalone",
+    "Scope": "/",
+    "start_url": "/index.html",
+    "icons": [
+      {
+        "src": "img/static/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "splash_pages": null
+  }

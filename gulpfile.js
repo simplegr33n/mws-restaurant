@@ -30,6 +30,11 @@ const reload = browserSync.reload;
 let dev = true; // toggle development state
 
 // UTILITY - GULP TASKS
+// JSON output task
+gulp.task('json', () => {
+    return gulp.src('app/*.json')
+        .pipe(gulp.dest('.tmp'));
+});
 // HTML output task
 gulp.task('html', () => {
     return gulp.src('app/*.html')
@@ -69,7 +74,7 @@ gulp.task('js', () => {
         .pipe(gulp.dest('.tmp/js'));
 });
 // Copy task
-gulp.task('copy', gulp.series('html', 'css', 'js'));
+gulp.task('copy', gulp.series('html', 'css', 'js', 'json'));
 // Empty output directories task
 gulp.task('clean', (done) => {
     del(['.tmp/**/*.jpeg', 'dist/**/*.jpeg', 'dist/img/static/*', '.tmp/img/static/*', 'dist/**/*.html', 'dist/**/*.js', 'dist/**/*.css', '.tmp/**/*.html', '.tmp/**/*.js', '.tmp/**/*.css']);
@@ -88,6 +93,7 @@ gulp.task('images', () => {
     return gulp.src('app/img/*.jpg')
         .pipe(responsive({
             '*.jpg': [
+                { width: 600},
                 { width: 300, rename: { suffix: '-300w' }, },
                 { width: 400, rename: { suffix: '-400w' }, },
                 { width: 600, rename: { suffix: '-600w' }, },
@@ -187,7 +193,7 @@ gulp.task('html:dist', function () {
 
 // Optimize Service Worker
 gulp.task('sw:dist', function () {
-    var bundler = browserify('./app/sw.js', { debug: true }); // ['1.js', '2.js']
+    var bundler = browserify('./app/sw.js', { debug: true });
 
     return bundler
         .transform(babelify, { sourceMaps: true })  // required for 'import'
@@ -225,9 +231,13 @@ gulp.task('js:dist', () => {
         .pipe(size({ title: 'scripts' }))   // logs file size
         .pipe(gulp.dest('dist/js'));
 });
+gulp.task('json:dist', () => {
+    return gulp.src('app/*.json')
+        .pipe(gulp.dest('dist'));
+});
 
 // Build production files, the default task
-gulp.task('default', gulp.series('clean', 'static-images', 'images', 'html:dist', 'css:dist', 'js:dist', 'sw:dist'), (done) => {
+gulp.task('default', gulp.series('clean', 'static-images', 'images', 'html:dist', 'css:dist', 'js:dist', 'json:dist', 'sw:dist'), (done) => {
     done();
 });
 
@@ -237,10 +247,10 @@ gulp.task('dist', function () {
         port: 8000
     });
 
-    gulp.watch(['app/*.html'], gulp.series('html:dist', reload));
-    gulp.watch(['app/css/*.css'], gulp.series('html:dist', reload));
-    gulp.watch(['app/js/*.js'], gulp.series('html:dist', reload));
-    gulp.watch(['app/sw.js'], gulp.series('sw', reload));
+    gulp.watch(['dist/*.html'], gulp.series('html:dist', reload));
+    gulp.watch(['dist/css/*.css'], gulp.series('html:dist', reload));
+    gulp.watch(['dist/js/*.js'], gulp.series('html:dist', reload));
+    gulp.watch(['dist/sw.js'], gulp.series('sw', reload));
 });
 
 gulp.task('app:serve', function () {

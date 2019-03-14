@@ -1,4 +1,4 @@
-const staticCacheName = 'restaurant-cache-019';
+const staticCacheName = 'restaurant-cache-026';
 // Note: use following command in devtools console to force unreigstration of current service worker 
 //////
 ////// navigator.serviceWorker.getRegistration().then(function(r){r.unregister();});
@@ -19,16 +19,16 @@ self.addEventListener('install', event => {
                     '/js/dbhelper.js',
                     '/js/main.js',
                     '/js/restaurant_info.js',
-                    '/dist/img/1-300w.jpg',
-                    '/dist/img/2-300w.jpg',
-                    '/dist/img/3-300w.jpg',
-                    '/dist/img/4-300w.jpg',
-                    '/dist/img/5-300w.jpg',
-                    '/dist/img/6-300w.jpg',
-                    '/dist/img/7-300w.jpg',
-                    '/dist/img/8-300w.jpg',
-                    '/dist/img/9-300w.jpg',
-                    '/dist/img/10-300w.jpg',
+                    '/dist/img/1.jpeg',
+                    '/dist/img/2.jpeg',
+                    '/dist/img/3.jpeg',
+                    '/dist/img/4.jpeg',
+                    '/dist/img/5.jpeg',
+                    '/dist/img/6.jpeg',
+                    '/dist/img/7.jpeg',
+                    '/dist/img/8.jpeg',
+                    '/dist/img/9.jpeg',
+                    '/dist/img/10.jpeg',
                     '/js/register_sw.js'
                 ]).catch(error => {
                     console.log('Caches open failed: ' + error);
