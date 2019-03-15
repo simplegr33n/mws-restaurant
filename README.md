@@ -2,7 +2,7 @@
 ---
 #### _Three Stage Course Material Project - Restaurant Reviews_
 
-## Project Overview: Stage 2
+## Project Overview: Stage 3
 
 # To Start:
 * Clone and start the accompanying server: https://github.com/udacity/mws-restaurant-stage-2
