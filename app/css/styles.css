@@ -258,13 +258,37 @@ nav h1 a {
 	color: #fff;
 	display: inline-block;
 	font-size: 10pt;
-	margin: 15px 0 0;
+	margin: 14px -13px 0;
 	padding: 8px 30px 10px;
 	text-align: center;
 	text-decoration: none;
 	text-transform: uppercase;
 	border-radius: 4px;
 }
+
+ /* ================== Favourite Button ================ */
+
+ #restaurants-list .fav-control {
+	font-size: 64px;
+	background-color: transparent;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	padding: 0;
+	line-height: 42px;
+	width: 48px;
+	height: 48px;
+	position: absolute;
+	align-self: flex-end;
+	background-size: cover;
+	cursor: pointer;
+  }
+  #restaurants-list .fav-control.active  {
+	background: rgba(233, 255, 36, 0.7);
+  }
+  #restaurants-list .fav-control:hover {
+	color: rgba(36, 255, 47, 0.7);
+  }
 
 /* ====================== Restaurant Details ====================== */
 
@@ -454,3 +478,4 @@ nav h1 a {
 .leaflet-container a {
     color: rgb(7, 47, 63) !important;
 }
+

@@ -146,6 +146,34 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
 
+
+  const favButton = document.createElement('button');
+  favButton.className = 'fav-control';
+  favButton.setAttribute('aria-label', 'favourite');
+  favButton.innerHTML = `&#9829`;
+  if (restaurant.is_favourite === 'true') {
+    favButton.classList.add('active');
+    favButton.setAttribute('aria-pressed', 'true');
+    favButton.title = `Remove ${restaurant.name} as a favourite`;
+  } else {
+    favButton.setAttribute('aria-pressed', 'false');
+    favButton.title = `Add ${restaurant.name} as a favourite`;
+  }
+  favButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (favButton.classList.contains('active')) {
+      favButton.setAttribute('aria-pressed', 'false');
+      favButton.title = `Add ${restaurant.name} as a favourite`;
+      DBHelper.removeFavourite(restaurant.id);
+    } else {
+      favButton.setAttribute('aria-pressed', 'true');
+      favButton.title = `Remove ${restaurant.name} as a favourite`;
+      DBHelper.setFavorite(restaurant.id);
+    }
+    favButton.classList.toggle('active');
+  });
+  li.append(favButton);
+
   const image = document.createElement('img');
   image.className = 'restaurant-img';
   image.alt = restaurant.name + ' image';
