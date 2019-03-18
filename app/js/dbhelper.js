@@ -73,7 +73,7 @@ class DBHelper {
 	 */
 	static get DATABASE_URL() {
 		const port = 1337 // Change this to your server port
-		return `http://localhost:${port}/restaurants/`;
+		return `http://localhost:${port}`;
 	}
 
 
@@ -81,7 +81,7 @@ class DBHelper {
 	// PUT in is_favourites
 	// http://localhost:1337/restaurants/<restaurant_id>/?is_favourite=true
 	static setFavourite(id) {
-		fetch(`${DBHelper.DATABASE_URL}${id}/?is_favourite=true`, {
+		fetch(`${DBHelper.DATABASE_URL}/restaurants${id}/?is_favourite=true`, {
 			method: 'PUT'
 		}).catch(err => console.log(err));
 	}
@@ -89,7 +89,7 @@ class DBHelper {
 	// PUT in is_favourites
 	// http://localhost:1337/restaurants/<restaurant_id>/?is_favourite=false
 	static removeFavourite(id) {
-		fetch(`${DBHelper.DATABASE_URL}${id}/?is_favourite=false`, {
+		fetch(`${DBHelper.DATABASE_URL}/restaurants${id}/?is_favourite=false`, {
 			method: 'PUT'
 		}).catch(err => console.log(err));
 	}
@@ -99,7 +99,7 @@ class DBHelper {
 	 */
 	static fetchRestaurants(callback) {
 
-		fetch(DBHelper.DATABASE_URL)
+		fetch(`${DBHelper.DATABASE_URL}/restaurants`)
 			.then(response => response.json())
 			.then(function (jsonResponse) {
 				//console.log("Fetched restaurants!");
@@ -269,6 +269,17 @@ class DBHelper {
 			})
 		marker.addTo(newMap);
 		return marker;
+	}
+
+
+	/**
+	 * Fetch restaurant reviews by rest id
+	 */
+	static fetchRestaurantReviewsById(id, callback) {
+		fetch(DBHelper.DATABASE_URL + `/reviews/?restaurant_id=${id}`)
+			.then(response => response.json())
+			.then(data => callback(null, data))
+			.catch(err => callback(err, null));
 	}
 
 
