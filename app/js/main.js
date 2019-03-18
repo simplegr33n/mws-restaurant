@@ -146,7 +146,6 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
 
-
   const favButton = document.createElement('button');
   favButton.className = 'fav-control';
   favButton.setAttribute('aria-label', 'favourite');
@@ -154,20 +153,20 @@ createRestaurantHTML = (restaurant) => {
   if (restaurant.is_favourite === 'true') {
     favButton.classList.add('active');
     favButton.setAttribute('aria-pressed', 'true');
-    favButton.title = `Remove ${restaurant.name} as a favourite`;
+    favButton.title = `Remove ${restaurant.name} from favourite`;
   } else {
     favButton.setAttribute('aria-pressed', 'false');
-    favButton.title = `Add ${restaurant.name} as a favourite`;
+    favButton.title = `Add ${restaurant.name} to favourite`;
   }
   favButton.addEventListener('click', (event) => {
     event.preventDefault();
     if (favButton.classList.contains('active')) {
       favButton.setAttribute('aria-pressed', 'false');
-      favButton.title = `Add ${restaurant.name} as a favourite`;
+      favButton.title = `Add ${restaurant.name} to favourites`;
       DBHelper.removeFavourite(restaurant.id);
     } else {
       favButton.setAttribute('aria-pressed', 'true');
-      favButton.title = `Remove ${restaurant.name} as a favourite`;
+      favButton.title = `Remove ${restaurant.name} from favourites`;
       DBHelper.setFavorite(restaurant.id);
     }
     favButton.classList.toggle('active');
