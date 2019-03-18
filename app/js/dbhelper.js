@@ -79,17 +79,17 @@ class DBHelper {
 
 
 	// PUT in is_favourites
-	// http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=true
+	// http://localhost:1337/restaurants/<restaurant_id>/?is_favourite=true
 	static setFavourite(id) {
-		fetch(`${DBHelper.DATABASE_URL}${id}/?is_favorite=true`, {
+		fetch(`${DBHelper.DATABASE_URL}${id}/?is_favourite=true`, {
 			method: 'PUT'
 		}).catch(err => console.log(err));
 	}
 
 	// PUT in is_favourites
-	// http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=false
+	// http://localhost:1337/restaurants/<restaurant_id>/?is_favourite=false
 	static removeFavourite(id) {
-		fetch(`${DBHelper.DATABASE_URL}${id}/?is_favorite=false`, {
+		fetch(`${DBHelper.DATABASE_URL}${id}/?is_favourite=false`, {
 			method: 'PUT'
 		}).catch(err => console.log(err));
 	}
