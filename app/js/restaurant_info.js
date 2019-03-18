@@ -70,6 +70,29 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
+  const favButton = document.getElementById('details-fav');
+  if (restaurant.is_favourite === 'true') {
+    favButton.classList.add('active');
+    favButton.setAttribute('aria-pressed', 'true');
+    favButton.title = `Remove ${restaurant.name} from favourite`;
+  } else {
+    favButton.setAttribute('aria-pressed', 'false');
+    favButton.title = `Add ${restaurant.name} to favourite`;
+  }
+  favButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (favButton.classList.contains('active')) {
+      favButton.setAttribute('aria-pressed', 'false');
+      favButton.title = `Add ${restaurant.name} to favourites`;
+      DBHelper.removeFavourite(restaurant.id);
+    } else {
+      favButton.setAttribute('aria-pressed', 'true');
+      favButton.title = `Remove ${restaurant.name} from favourites`;
+      DBHelper.setFavourite(restaurant.id);
+    }
+    favButton.classList.toggle('active');
+  });
+
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
   image.src = DBHelper.imageUrlForRestaurant(restaurant);

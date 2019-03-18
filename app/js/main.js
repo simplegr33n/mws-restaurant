@@ -167,7 +167,7 @@ createRestaurantHTML = (restaurant) => {
     } else {
       favButton.setAttribute('aria-pressed', 'true');
       favButton.title = `Remove ${restaurant.name} from favourites`;
-      DBHelper.setFavorite(restaurant.id);
+      DBHelper.setFavourite(restaurant.id);
     }
     favButton.classList.toggle('active');
   });

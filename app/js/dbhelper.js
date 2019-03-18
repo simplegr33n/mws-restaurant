@@ -76,6 +76,24 @@ class DBHelper {
 		return `http://localhost:${port}/restaurants/`;
 	}
 
+
+
+	// PUT in is_favourites
+	// http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=true
+	static setFavourite(id) {
+		fetch(`${DBHelper.DATABASE_URL}${id}/?is_favorite=true`, {
+			method: 'PUT'
+		}).catch(err => console.log(err));
+	}
+
+	// PUT in is_favourites
+	// http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=false
+	static removeFavourite(id) {
+		fetch(`${DBHelper.DATABASE_URL}${id}/?is_favorite=false`, {
+			method: 'PUT'
+		}).catch(err => console.log(err));
+	}
+
 	/**
 	 * Fetch all restaurants.
 	 */
@@ -252,7 +270,6 @@ class DBHelper {
 		marker.addTo(newMap);
 		return marker;
 	}
-
 
 
 }
