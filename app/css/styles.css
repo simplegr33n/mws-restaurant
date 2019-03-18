@@ -266,9 +266,9 @@ nav h1 a {
 	border-radius: 4px;
 }
 
- /* ============= Favourite Button (List Item) =========== */
+/* ============= Favourite Button (List Item) =========== */
 
- #restaurants-list .fav-control {
+#restaurants-list .fav-control {
 	font-size: 64px;
 	background-color: transparent;
 	justify-content: center;
@@ -282,14 +282,15 @@ nav h1 a {
 	align-self: flex-end;
 	color: rgba(252, 252, 252, 0.7);
 	cursor: pointer;
-  }
-  #restaurants-list .fav-control.active  {
-	color: rgba(255, 59, 34, 0.7);
-  }
-  #restaurants-list .fav-control:hover {
-	color: rgba(36, 255, 47, 0.7);
-  }
+}
 
+#restaurants-list .fav-control.active {
+	color: rgba(255, 59, 34, 0.7);
+}
+
+#restaurants-list .fav-control:hover {
+	color: rgba(36, 255, 47, 0.7);
+}
 
 /* ====================== Restaurant Details ====================== */
 
@@ -318,7 +319,6 @@ nav h1 a {
 	min-height: 40vh;
 	width: auto;
 	margin: auto;
-	
 }
 
 #restaurant-container {
@@ -344,7 +344,6 @@ nav h1 a {
 	justify-content: center;
 	align-items: center;
 }
-
 
 .restaurant-info-div {
 	max-width: 50vw;
@@ -398,7 +397,7 @@ nav h1 a {
 
 #reviews-container {
 	border-bottom: 1px solid #d9d9d9;
-	border-top: 1px solid #fff;
+	border-top: 1px solid rgb(255, 255, 255);
 	padding: 10px;
 	width: 100%;
 	height: auto;
@@ -408,6 +407,20 @@ nav h1 a {
 	margin: auto;
 	justify-content: space-around;
 	align-items: baseline;
+}
+
+#reviews-container .add-review-btn {
+	padding: 0 8px;
+	font-size: 1.6em;
+	cursor: pointer;
+}
+
+#reviews-header {
+	width: 90%;
+	display: flex;
+	align-self: center;
+	align-items: flex-start;
+	justify-content: space-between;
 }
 
 #reviews-container h3 {
@@ -467,9 +480,12 @@ nav h1 a {
 	margin-right: auto;
 	border: 2px solid #ccc;
 }
- /* ============= Favourite Button (Details Page) ============ */
 
- #details-fav {
+
+
+/* ============= Favourite Button (Details Page) ============ */
+
+#details-fav {
 	font-size: 64px;
 	background-color: transparent;
 	justify-content: center;
@@ -482,13 +498,15 @@ nav h1 a {
 	position: absolute;
 	color: rgba(252, 252, 252, 0.7);
 	cursor: pointer;
-  }
-  #details-fav.active   {
+}
+
+#details-fav.active {
 	color: rgba(255, 59, 34, 0.7);
-  }
-  #details-fav:hover {
+}
+
+#details-fav:hover {
 	color: rgba(36, 255, 47, 0.7);
-  }
+}
 
 /* ====================== Aria ====================== */
 
@@ -499,6 +517,155 @@ nav h1 a {
 /* ====================== Leaflet ====================== */
 
 .leaflet-container a {
-    color: rgb(7, 47, 63) !important;
+	color: rgb(7, 47, 63) !important;
 }
 
+/* ============= Add Review Modal ============ */
+.modal {
+	/* begin css tricks */
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	/* end css tricks */
+	z-index: -10;
+	display: flex;
+	flex-direction: column;
+	width: 80vw;
+	height: 80vh;
+	border: 1px solid #666;
+	border-radius: 10px;
+	opacity: 0;
+	transition: all .3s;
+	overflow: hidden;
+	background-color: #eee;
+}
+
+.modal.show {
+	opacity: 1;
+	z-index: 1000;
+}
+
+.modal .exit-btn {
+	align-self: flex-end;
+	font-size: 1.6em;
+	margin: 8px;
+	padding: 0 8px;
+	cursor: pointer;
+}
+
+#review-form {
+	max-width: 92%;
+	color: rgb(51, 51, 51);
+	overflow-y: auto;
+}
+form {
+	max-width: 900px;
+	padding: 0 20px 20px 20px;
+  }
+  input,
+  select,
+  .rate,
+  textarea {
+	background: #f9f9f9;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	box-shadow: inset 0 1px 1px #e1e1e1;
+	font-size: 16px;
+	padding: 8px;
+  }
+  .static-rate {
+	/* border: 1px solid #ccc; */
+	border-radius: 8px;
+	/* padding: 8px; */
+	padding: 10px;
+  }
+  input[type="radio"] {
+	box-shadow: none;
+  }
+  button {
+	background: #f9f9f9;
+	border-radius: 8px;
+	font-size: 16px;
+	padding: 8px;
+	min-width: 48px;
+	min-height: 48px;
+  }
+  button:hover{
+	background-color: #fff;
+	border: 1px solid #aaa;
+  }
+  button:active {
+	border-style: ridge;
+  }
+  button#review-add-btn, 
+  button.close-btn, 
+  button#submit-review-btn {
+	min-height: 40px;
+  }
+  button#submit-review-btn {
+	font-weight: bold;
+	cursor: pointer;
+	padding: 0 16px;
+  }
+  
+  .fieldset {
+	margin-top: 20px;
+
+  }
+  #reviewComments {
+	width: 90%;
+  }
+
+  .right {
+	align-self: flex-end;
+  }
+  .form-container {
+	width: 100%;
+	padding: 0 20px 26px;
+	color: #333;
+	overflow-y: auto;
+  }
+  .form-container h2 {
+	margin: 0 0 0 6px;
+  }
+  #confirm-delete_modal {
+	top: 30%;
+  }
+  #confirm_form {
+	min-width: 300px;
+  }
+  .confirm-buttons {
+	display: flex;
+	justify-content: space-between;
+  }
+  #review-form {
+	display: flex;
+	flex-direction: column;
+	background: #fff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+  }
+  #review-form label, #review-form input {
+	display: block;
+  }
+  #review-form label {
+	font-weight: bold;
+	margin-bottom: 5px;
+  }
+  
+  #review-form .rate label, #review-form .rate input,
+  #review-form .rate1 label, #review-form .rate1 input {
+	display: inline-block;
+  }
+ 
+  #submit-review {
+	align-self: flex-end;
+  }
+
+  #confirm_delete_modal {
+	top: 30%;
+  }
+  .rate {
+	  max-width: 400px;
+  }
