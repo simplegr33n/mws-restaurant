@@ -5,7 +5,7 @@
 ## Project Overview: Stage 3
 
 # To Start:
-* Clone and start the accompanying server: https://github.com/udacity/mws-restaurant-stage-2
+* Clone and start the accompanying server: https://github.com/udacity/mws-restaurant-stage-3
 * Clone this repo
 * **npm i** in the repos directory to install packages
 * **gulp** to generate a dist build
