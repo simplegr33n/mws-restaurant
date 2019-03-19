@@ -142,6 +142,8 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 fillReviewsHTML = (error, reviews) => {
 	self.restaurant.reviews = reviews;
 
+	console.log("fillin with: " + reviews);
+
 	if (error) {
 		console.log('Error getting reviews: ', error);
 	}
@@ -171,8 +173,10 @@ fillReviewsHTML = (error, reviews) => {
 		return;
 	}
 	const ul = document.getElementById('reviews-list');
+	let reviewIndex = 0;
 	reviews.forEach(review => {
-		ul.appendChild(createReviewHTML(review));
+		reviewIndex++;
+		ul.appendChild(createReviewHTML(review, reviewIndex));
 	});
 	container.appendChild(ul);
 
@@ -182,13 +186,45 @@ fillReviewsHTML = (error, reviews) => {
 /**
  * Create review HTML and add it to the webpage.
  */
-createReviewHTML = (review) => {
+createReviewHTML = (review, reviewIndex) => {
 	const li = document.createElement('li');
+	const reviewCtrls = document.createElement('div');
+	reviewCtrls.classList.add('review-edit-delete');
+
 	const name = document.createElement('p');
 	name.innerHTML = review.name;
 	name.style.fontWeight = 'bold';
+	name.style.fontSize = '20px';
 	name.style.fontStyle = 'italic';
-	li.appendChild(name);
+	reviewCtrls.appendChild(name);
+
+	const editReviewBtn = document.createElement('button');
+	editReviewBtn.id = 'review-edit-btn' + reviewIndex;
+	editReviewBtn.classList.add('review_btn');
+	editReviewBtn.classList.add('review-edit-btn');
+	editReviewBtn.dataset.reviewId = review.id;
+	editReviewBtn.innerHTML = 'Edit';
+	editReviewBtn.setAttribute('aria-label', 'edit review');
+	editReviewBtn.title = 'Edit Review';
+	editReviewBtn.addEventListener('click', (e) => openEditReviewModal(e, review));
+	reviewCtrls.appendChild(editReviewBtn);
+
+	const delReviewBtn = document.createElement('button');
+	delReviewBtn.id = 'review-del-btn' + reviewIndex;
+	delReviewBtn.classList.add('review_btn');
+	delReviewBtn.classList.add('review-del-btn');
+	delReviewBtn.dataset.reviewId = review.id;
+	delReviewBtn.dataset.restaurantId = review._parent_id;
+	delReviewBtn.dataset.reviewName = review.name;
+	delReviewBtn.innerHTML = 'x';
+	delReviewBtn.setAttribute('aria-label', 'delete review');
+	delReviewBtn.title = 'Delete Review';
+	delReviewBtn.addEventListener('click', openConfirmDeleteModal);
+	reviewCtrls.appendChild(delReviewBtn);
+
+	li.appendChild(reviewCtrls);
+
+
 
 	const createdAt = document.createElement('p');
 	const createdDate = new Date(review.createdAt).toLocaleDateString();
@@ -238,13 +274,13 @@ getParameterByName = (name, url) => {
 	return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-
+//  Add Review
 const addReview = (event) => {
 	event.preventDefault();
 	const form = event.target;
 
 	if (form.checkValidity()) {
-		console.log('is valid');
+		console.log('Form is valid');
 
 		const restaurant_id = self.restaurant.id;
 		const name = document.querySelector('#reviewName').value;
@@ -258,17 +294,48 @@ const addReview = (event) => {
 				console.log('Review queued while offline');
 				// showOffline();
 			} else {
-				console.log('Received updated database record from server', review);
+				console.log('Received updated record from server', review);
 				DBHelper.createIDBReview(review); // write record to local IDB store
 			}
-			idbKeyVal.getAllIdx('reviews', 'restaurant_id', restaurant_id)
-				.then(reviews => {
-					console.log('New Review!', reviews);
-					fillReviewsHTML(null, reviews);
-					closeAddReviewModal();
-				});
+
+			DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
+			closeAddReviewModal();
+
 		});
 	}
+};
+
+function delReview(review_id, restaurant_id) {
+
+	console.log(review_id);
+
+	DBHelper.deleteRestaurantReview(review_id, restaurant_id, (error, result) => {
+		console.log('got delete callback');
+		if (error) {
+			showOffline();
+		} else {
+			console.log(result);
+			DBHelper.delIDBReview(review_id, restaurant_id);
+		}
+		// update indexeddb
+		idbKeyVal.getAllIdx('reviews', 'restaurant_id', restaurant_id)
+			.then(reviews => {
+				// console.log(reviews);
+				fillReviewsHTML(null, reviews);
+				closeConfirmDeleteModal();
+			});
+		// getIDBReviews(restaurant_id);
+	});
+};
+
+const getIDBReviews = function (restaurant_id) {
+	idbKeyVal.getAllIdx('reviews', 'restaurant_id', restaurant_id)
+		.then(reviews => {
+			// console.log(reviews);
+			fillReviewsHTML(null, reviews);
+			closeConfirmDeleteModal();
+			document.getElementById('review-add-btn').focus();
+		});
 };
 
 /**
@@ -347,6 +414,16 @@ const configureModal = (modal, closeModal) => {
 	}
 };
 
+const closeConfirmDeleteModal = () => {
+	const modal = document.getElementById('confirm-delete-modal');
+	// Hide the modal and overlay
+	modal.classList.remove('show');
+	modalOverlay.classList.remove('show');
+
+	// Set focus back to element that had it before the modal was opened
+	focusBeforeModal.focus();
+};
+
 const closeAddReviewModal = () => {
 	const modal = document.getElementById('modal-add-review');
 	// Hide the modal and overlay
@@ -361,8 +438,83 @@ const closeAddReviewModal = () => {
 	focusBeforeModal.focus();
 };
 
+const closeEditReviewModal = () => {
+	const modal = document.getElementById('modal-add-review');
+	// Hide the modal and overlay
+	modal.classList.remove('show');
+	modalOverlay.classList.remove('show');
 
-// allows a11y & keyboard nav
+	const form = document.getElementById('review-form');
+	form.reset();
+	delete form.dataset.reviewId;
+	form.removeEventListener('submit', editReview, false);
+
+	// Set focus back to element that had it before the modal was opened
+	focusBeforeModal.focus();
+};
+
+// Star Rating Control
+const setFocus = (event) => {
+	const rateRadios = document.getElementsByName('rate');
+	const rateRadiosArr = Array.from(rateRadios);
+	const anyChecked = rateRadiosArr.some(radio => { return radio.checked === true; });
+	// console.log('anyChecked', anyChecked);
+	if (!anyChecked) {
+		const star1 = document.getElementById('star1');
+		star1.focus();
+		// star1.checked = true;
+	}
+};
+
+const openConfirmDeleteModal = (e) => {
+	const modal = document.getElementById('confirm-delete-modal');
+	configureModal(modal, closeConfirmDeleteModal);
+
+	const nameContainer = document.getElementById('review-name');
+	nameContainer.textContent = e.target.dataset.reviewName;
+
+	const cancelBtn = document.getElementById('cancel-btn');
+	cancelBtn.onclick = closeConfirmDeleteModal;
+
+	const delConfirmBtn = document.getElementById('delete-confirm-btn');
+	delConfirmBtn.dataset.reviewId = e.target.dataset.reviewId;
+	delConfirmBtn.dataset.restaurantId = e.target.dataset.restaurantId;
+
+	console.log(e.target.dataset);
+	console.log("modal review id: " + e.target.dataset.reviewName);
+	console.log("modal review id: " + e.target.dataset.reviewId);
+
+	delConfirmBtn.onclick = delReview(e.target.dataset.reviewId, e.target.dataset.restaurantId);
+};
+
+const openEditReviewModal = (e, review) => {
+	const modal = document.getElementById('modal-add-review');
+	configureModal(modal, closeEditReviewModal);
+
+	document.getElementById('add-review-header').innerText = 'Edit Review';
+
+	document.querySelector('#reviewName').value = review.name;
+	switch (review.rating) {
+		case 1:
+			document.getElementById('star1').checked = true;
+			break;
+		case 2:
+			document.getElementById('star2').checked = true;
+			break;
+		case 3:
+			document.getElementById('star3').checked = true;
+			break;
+		case 4:
+			document.getElementById('star4').checked = true;
+			break;
+		case 5:
+			document.getElementById('star5').checked = true;
+			break;
+	}
+}
+
+
+// allows a11y & keyboard navigation
 const navRadioGroup = (evt) => {
 	const star1 = document.getElementById('star1');
 	const star2 = document.getElementById('star2');
@@ -420,4 +572,4 @@ const navRadioGroup = (evt) => {
 			}
 		}
 	}
-};
+}

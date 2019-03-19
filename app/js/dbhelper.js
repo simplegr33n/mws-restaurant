@@ -398,6 +398,84 @@ class DBHelper {
 			});
 	}
 
+	// PUT
+	// http://localhost:1337/reviews/
+	static updateRestaurantReview(review_id, restaurant_id, name, rating, comments, callback) {
+		const url = `${DBHelper.DATABASE_URL}/reviews/${review_id}`;
+		console.log(url);
+		const method = 'PUT';
+		const headers = {
+			"Content-Type": "application/json; charset=utf-8"
+		};
+
+		const data = {
+			name: name,
+			rating: +rating,
+			comments: comments
+		};
+		const body = JSON.stringify(data);
+
+		fetch(url, {
+			headers: headers,
+			method: method,
+			body: body
+		})
+			.then(response => response.json())
+			.then(data => callback(null, data))
+			.catch(err => {
+				// We are offline...
+				// Save review to local IDB
+				data._id = review_id;
+				data._parent_id = restaurant_id; // Add this to provide IDB foreign key
+				// create review object (since it's not coming back from DB)
+				const nowDate = new Date();
+				const review = {
+					name: name,
+					rating: +rating,
+					comments: comments,
+					_changed: nowDate.toISOString()
+				};
+				DBHelper.updateIDBReview(review_id, restaurant_id, review)
+					.then((review_key) => {
+						// Get review_key and save it with review to offline queue
+						console.log('Update review to queue: returned review_key', review_key);
+						DBHelper.addRequestToQueue(url, headers, method, body, review_key)
+							.then(offline_key => console.log('returned offline_key', offline_key));
+					});
+				callback(err, null);
+			});
+	}
+
+	static deleteRestaurantReview(review_id, restaurant_id, callback) {
+		const url = `${DBHelper.DATABASE_URL}/reviews/${review_id}`;
+		const method = 'DELETE';
+		const headers = {
+			"Content-Type": "application/json; charset=utf-8"
+		};
+
+		fetch(url, {
+			headers: headers,
+			method: method
+		})
+			.then(response => response.json())
+			.then(data => callback(null, data))
+			.catch(err => {
+				// Offline
+				// Delete from  local IndexedDB
+				console.log('what err:', err);
+				DBHelper.delIDBReview(review_id, restaurant_id)
+					.then(() => {
+						// add request to queue
+						console.log('Add DELETE REVIEW to queue');
+						console.log(`DBHelper.addRequestToQueue(${url}, ${headers}, ${method}, '')`);
+						DBHelper.addRequestToQueue(url, headers, method)
+							.then(offline_key => console.log('returned offline_key', offline_key));
+						// console.log('implement offline for delete review');
+					});
+				callback(err, null);
+			});
+	}
+
 
 	static createIDBReview(review) {
 		return idbKeyVal.setReturnId('reviews', review)
@@ -405,6 +483,136 @@ class DBHelper {
 				console.log('Saved to IndexedDB: reviews', review);
 				return id;
 			});
+	}
+
+	static updateIDBReview(review_id, restaurant_id, review) {
+		return idbKeyVal.openCursorIdxByKey('reviews', 'restaurant_id', restaurant_id)
+			.then(function nextCursor(cursor) {
+				if (!cursor) return;
+				var updateData = cursor.value;
+				// console.log(cursor.value.name);
+				if (cursor.value._id === review_id) {
+					console.log('Local IDB review record matched for update');
+
+					updateData.name = review.name;
+					updateData.rating = review.rating;
+					updateData.comments = review.comments;
+					updateData._changed = review._changed;
+					cursor.update(updateData);
+					console.log('heres the primary key:', cursor.primaryKey);
+					return cursor.primaryKey;
+				}
+				return cursor.continue().then(nextCursor);
+			});
+	}
+
+	static delIDBReview(review_id, restaurant_id) {
+		return idbKeyVal.openCursorIdxByKey('reviews', 'restaurant_id', restaurant_id)
+			.then(function nextCursor(cursor) {
+				if (!cursor) return;
+				console.log(cursor.value.name);
+				if (cursor.value._id === review_id) {
+					console.log('Found review to delete');
+					cursor.delete();
+					return;
+				}
+				return cursor.continue().then(nextCursor);
+			});
+	}
+
+	static addRequestToQueue(url, headers, method, data, review_key) {
+		const request = {
+			url: url,
+			headers: headers,
+			method: method,
+			data: data,
+			review_key: review_key
+		};
+		return idbKeyVal.setReturnId('offline', request)
+			.then(id => {
+				console.log('Saved to IDB: offline', request);
+				return id;
+			});
+	}
+
+	static processQueue() {
+		// Open offline queue & return cursor
+		dbPromise.then(db => {
+			if (!db) return;
+			const tx = db.transaction(['offline'], 'readwrite');
+			const store = tx.objectStore('offline');
+			return store.openCursor();
+		})
+			.then(function nextRequest(cursor) {
+				if (!cursor) {
+					console.log('cursor done.');
+					return;
+				}
+				// console.log('cursor', cursor.value.data.name, cursor.value.data);
+				console.log('cursor.value', cursor.value);
+
+				const offline_key = cursor.key;
+				const url = cursor.value.url;
+				const headers = cursor.value.headers;
+				const method = cursor.value.method;
+				const data = cursor.value.data;
+				const review_key = cursor.value.review_key;
+				// const body = data ? JSON.stringify(data) : '';
+				const body = data;
+
+				// update server with HTTP POST request & get updated record back        
+				fetch(url, {
+					headers: headers,
+					method: method,
+					body: body
+				})
+					.then(response => response.json())
+					.then(data => {
+						// data is the returned record
+						console.log('Received updated record from DB Server', data);
+
+						// 1. Delete http request record from offline store
+						dbPromise.then(db => {
+							const tx = db.transaction(['offline'], 'readwrite');
+							tx.objectStore('offline').delete(offline_key);
+							return tx.complete;
+						})
+							.then(() => {
+								// test if this is a review or favorite update
+								if (review_key === undefined) {
+									console.log('Favorite posted to server.');
+								} else {
+									// 2. Add new review record to reviews store
+									// 3. Delete old review record from reviews store 
+									dbPromise.then(db => {
+										const tx = db.transaction(['reviews'], 'readwrite');
+										return tx.objectStore('reviews').put(data)
+											.then(() => tx.objectStore('reviews').delete(review_key))
+											.then(() => {
+												console.log('tx complete reached.');
+												return tx.complete;
+											})
+											.catch(err => {
+												tx.abort();
+												console.log('transaction error: tx aborted', err);
+											});
+									})
+										.then(() => console.log('review transaction success!'))
+										.catch(err => console.log('reviews store error', err));
+								}
+							})
+							.then(() => console.log('offline rec delete success!'))
+							.catch(err => console.log('offline store error', err));
+
+					}).catch(err => {
+						console.log('fetch error. we are offline.');
+						console.log(err);
+						return;
+					});
+				return cursor.continue().then(nextRequest);
+			})
+			.then(() => console.log('Done cursoring'))
+			.catch(err => console.log('Error opening cursor', err));
 	}
 }
 

@@ -481,8 +481,6 @@ nav h1 a {
 	border: 2px solid #ccc;
 }
 
-
-
 /* ============= Favourite Button (Details Page) ============ */
 
 #details-fav {
@@ -521,6 +519,7 @@ nav h1 a {
 }
 
 /* ============= Add Review Modal ============ */
+
 .modal {
 	/* begin css tricks */
 	position: fixed;
@@ -559,113 +558,134 @@ nav h1 a {
 	color: rgb(51, 51, 51);
 	overflow-y: auto;
 }
+
 form {
 	max-width: 900px;
 	padding: 0 20px 20px 20px;
-  }
-  input,
-  select,
-  .rate,
-  textarea {
+}
+
+input, select, .rate, textarea {
 	background: #f9f9f9;
 	border: 1px solid #ccc;
 	border-radius: 8px;
 	box-shadow: inset 0 1px 1px #e1e1e1;
 	font-size: 16px;
 	padding: 8px;
-  }
-  .static-rate {
+}
+
+.static-rate {
 	/* border: 1px solid #ccc; */
 	border-radius: 8px;
 	/* padding: 8px; */
 	padding: 10px;
-  }
-  input[type="radio"] {
+}
+
+input[type="radio"] {
 	box-shadow: none;
-  }
-  button {
+}
+
+button {
 	background: #f9f9f9;
 	border-radius: 8px;
 	font-size: 16px;
 	padding: 8px;
 	min-width: 48px;
 	min-height: 48px;
-  }
-  button:hover{
+}
+
+button:hover {
 	background-color: #fff;
 	border: 1px solid #aaa;
-  }
-  button:active {
+}
+
+button:active {
 	border-style: ridge;
-  }
-  button#review-add-btn, 
-  button.close-btn, 
-  button#submit-review-btn {
+}
+
+button#review-add-btn, button.close-btn, button#submit-review-btn {
 	min-height: 40px;
-  }
-  button#submit-review-btn {
+}
+
+button#submit-review-btn {
 	font-weight: bold;
 	cursor: pointer;
 	padding: 0 16px;
-  }
-  
-  .fieldset {
+}
+
+.fieldset {
 	margin-top: 20px;
+}
 
-  }
-  #reviewComments {
+#reviewComments {
 	width: 90%;
-  }
+}
 
-  .right {
+.right {
 	align-self: flex-end;
-  }
-  .form-container {
+}
+
+.form-container {
 	width: 100%;
 	padding: 0 20px 26px;
 	color: #333;
 	overflow-y: auto;
-  }
-  .form-container h2 {
+}
+
+.form-container h2 {
 	margin: 0 0 0 6px;
-  }
-  #confirm-delete_modal {
+}
+
+#confirm-delete_modal {
 	top: 30%;
-  }
-  #confirm_form {
+}
+
+#confirm_form {
 	min-width: 300px;
-  }
-  .confirm-buttons {
+}
+
+.confirm-buttons {
 	display: flex;
 	justify-content: space-between;
-  }
-  #review-form {
+}
+
+#review-form {
 	display: flex;
 	flex-direction: column;
 	background: #fff;
 	border: 1px solid #ccc;
 	border-radius: 4px;
-  }
-  #review-form label, #review-form input {
+}
+
+#review-form label, #review-form input {
 	display: block;
-  }
-  #review-form label {
+}
+
+#review-form label {
 	font-weight: bold;
 	margin-bottom: 5px;
-  }
-  
-  #review-form .rate label, #review-form .rate input,
-  #review-form .rate1 label, #review-form .rate1 input {
-	display: inline-block;
-  }
- 
-  #submit-review {
-	align-self: flex-end;
-  }
+}
 
-  #confirm_delete_modal {
+#review-form .rate label, #review-form .rate input, #review-form .rate1 label, #review-form .rate1 input {
+	display: inline-block;
+}
+
+#submit-review {
+	align-self: flex-end;
+}
+
+#confirm_delete_modal {
 	top: 30%;
-  }
-  .rate {
-	  max-width: 400px;
-  }
+}
+
+.rate {
+	max-width: 400px;
+}
+
+.review-edit-delete {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
