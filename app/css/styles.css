@@ -612,6 +612,11 @@ button#submit-review-btn {
 	padding: 0 16px;
 }
 
+.review-del-btn {
+	background-color: #aa0e0ea9;
+	font-weight: bold;
+}
+
 .fieldset {
 	margin-top: 20px;
 }

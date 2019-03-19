@@ -74,7 +74,6 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 	const address = document.getElementById('restaurant-address');
 	address.innerHTML = restaurant.address;
 
-	console.log("irersr?" + restaurant.is_favorite);
 	console.log("isfav?" + restaurant.is_favourite);
 
 	const favButton = document.getElementById('details-fav');
@@ -312,9 +311,50 @@ const addReview = (event) => {
 	}
 };
 
+const editReview = (e) => {
+	e.preventDefault();
+
+	console.log("editreview: " + e.target.dataset.reviewId)
+
+	const form = e.target;
+	const review_id = e.target.dataset.reviewId;
+	const restaurant_id = e.target.dataset.restaurantId;
+	
+
+	if (form.checkValidity()) {
+		const name = document.querySelector('#reviewName').value;
+		const rating = document.querySelector('input[name=rate]:checked').value;
+		const comments = document.querySelector('#reviewComments').value;
+
+		console.log('review_id: ', review_id);
+		console.log('restaurant_id: ', restaurant_id);
+		console.log('name: ', name);
+		console.log('rating: ', rating);
+		console.log('comments: ', comments);
+
+		// attempt save to database server
+		DBHelper.updateRestaurantReview(review_id, restaurant_id, name, rating, comments, (error, review) => {
+			console.log('Received update callback');
+			//form.reset();
+			if (error) {
+				console.log('Offline. Review sent to queue.');
+				//showOffline();
+			} else {
+				console.log('Received updated record from server', review);
+				DBHelper.updateIDBReview(review_id, restaurant_id, review);
+			}
+
+			DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
+			closeEditReviewModal();
+
+		});
+	}
+};
+
+
 const deleteReview = (e) => {
 	const review_id = e.target.dataset.reviewId;
-  const restaurant_id = e.target.dataset.restaurantId;
+	const restaurant_id = e.target.dataset.restaurantId;
 
 	DBHelper.deleteRestaurantReview(review_id, restaurant_id, (error, result) => {
 		console.log('got delete callback');
@@ -362,11 +402,10 @@ const configureModal = (modal, closeModal) => {
 	// Listen for and trap the keyboard
 	modal.addEventListener('keydown', trapTabKey);
 
-	// Listen for indicators to close the modal
+	// Listen for modal close
 	modalOverlay.addEventListener('click', closeModal);
-	// Close btn
+	// Close btns
 	let exitBtns = document.querySelectorAll('.exit-btn');
-	// closeBtn.addEventListener('click', closeModal);
 	exitBtns = Array.prototype.slice.call(exitBtns);
 	exitBtns.forEach(btn => btn.addEventListener('click', closeModal));
 
@@ -468,8 +507,6 @@ const setFocus = (event) => {
 };
 
 const openConfirmDeleteModal = (e) => {
-	console.log("OCDM");
-
 	const modal = document.getElementById('confirm-delete-modal');
 	configureModal(modal, closeConfirmDeleteModal);
 
@@ -487,8 +524,13 @@ const openConfirmDeleteModal = (e) => {
 };
 
 const openEditReviewModal = (e, review) => {
+
+	console.log("openERM: " + review.id);
+
 	const modal = document.getElementById('modal-add-review');
 	configureModal(modal, closeEditReviewModal);
+
+	document.querySelector('#reviewComments').value = review.comments;
 
 	document.getElementById('add-review-header').innerText = 'Edit Review';
 
@@ -510,6 +552,15 @@ const openEditReviewModal = (e, review) => {
 			document.getElementById('star5').checked = true;
 			break;
 	}
+
+	// submit form
+	const form = document.getElementById('review-form');
+	//form.addEventListener('submit', editReview, false);
+
+	const editSaveButton = document.getElementById('submit-review-btn');
+	editSaveButton.dataset.reviewId = review.id;
+	editSaveButton.dataset.restaurantId = review.restaurant_id;
+	editSaveButton.addEventListener("click", editReview);
 }
 
 
