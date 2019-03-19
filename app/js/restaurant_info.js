@@ -74,6 +74,9 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 	const address = document.getElementById('restaurant-address');
 	address.innerHTML = restaurant.address;
 
+	console.log("irersr?" + restaurant.is_favorite);
+	console.log("isfav?" + restaurant.is_favourite);
+
 	const favButton = document.getElementById('details-fav');
 	if (restaurant.is_favourite === 'true') {
 		favButton.classList.add('active');
@@ -148,7 +151,6 @@ fillReviewsHTML = (error, reviews) => {
 		console.log('Error getting reviews: ', error);
 	}
 	const header = document.getElementById('reviews-header');
-
 	var x = document.getElementsByClassName('add-review-btn');
 
 	if (x.length < 1) {
@@ -165,6 +167,10 @@ fillReviewsHTML = (error, reviews) => {
 	}
 
 	const container = document.getElementById('reviews-container');
+
+	const reviewsList = document.getElementById('reviews-list');
+	reviewsList.innerHTML = "";
+
 
 	if (!reviews) {
 		const noReviews = document.createElement('p');
@@ -203,6 +209,7 @@ createReviewHTML = (review, reviewIndex) => {
 	editReviewBtn.classList.add('review_btn');
 	editReviewBtn.classList.add('review-edit-btn');
 	editReviewBtn.dataset.reviewId = review.id;
+	editReviewBtn.dataset.restaurantId = review.restaurant_id;
 	editReviewBtn.innerHTML = 'Edit';
 	editReviewBtn.setAttribute('aria-label', 'edit review');
 	editReviewBtn.title = 'Edit Review';
@@ -214,7 +221,7 @@ createReviewHTML = (review, reviewIndex) => {
 	delReviewBtn.classList.add('review_btn');
 	delReviewBtn.classList.add('review-del-btn');
 	delReviewBtn.dataset.reviewId = review.id;
-	delReviewBtn.dataset.restaurantId = review._parent_id;
+	delReviewBtn.dataset.restaurantId = review.restaurant_id;
 	delReviewBtn.dataset.reviewName = review.name;
 	delReviewBtn.innerHTML = 'x';
 	delReviewBtn.setAttribute('aria-label', 'delete review');
@@ -295,7 +302,7 @@ const addReview = (event) => {
 				// showOffline();
 			} else {
 				console.log('Received updated record from server', review);
-				DBHelper.createIDBReview(review); // write record to local IDB store
+				DBHelper.createIDBReview(review); // write record to local IndexedDB store
 			}
 
 			DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
@@ -305,9 +312,9 @@ const addReview = (event) => {
 	}
 };
 
-function delReview(review_id, restaurant_id) {
-
-	console.log(review_id);
+const deleteReview = (e) => {
+	const review_id = e.target.dataset.reviewId;
+  const restaurant_id = e.target.dataset.restaurantId;
 
 	DBHelper.deleteRestaurantReview(review_id, restaurant_id, (error, result) => {
 		console.log('got delete callback');
@@ -317,14 +324,8 @@ function delReview(review_id, restaurant_id) {
 			console.log(result);
 			DBHelper.delIDBReview(review_id, restaurant_id);
 		}
-		// update indexeddb
-		idbKeyVal.getAllIdx('reviews', 'restaurant_id', restaurant_id)
-			.then(reviews => {
-				// console.log(reviews);
-				fillReviewsHTML(null, reviews);
-				closeConfirmDeleteModal();
-			});
-		// getIDBReviews(restaurant_id);
+		DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
+		closeConfirmDeleteModal();
 	});
 };
 
@@ -467,6 +468,8 @@ const setFocus = (event) => {
 };
 
 const openConfirmDeleteModal = (e) => {
+	console.log("OCDM");
+
 	const modal = document.getElementById('confirm-delete-modal');
 	configureModal(modal, closeConfirmDeleteModal);
 
@@ -480,11 +483,7 @@ const openConfirmDeleteModal = (e) => {
 	delConfirmBtn.dataset.reviewId = e.target.dataset.reviewId;
 	delConfirmBtn.dataset.restaurantId = e.target.dataset.restaurantId;
 
-	console.log(e.target.dataset);
-	console.log("modal review id: " + e.target.dataset.reviewName);
-	console.log("modal review id: " + e.target.dataset.reviewId);
-
-	delConfirmBtn.onclick = delReview(e.target.dataset.reviewId, e.target.dataset.restaurantId);
+	delConfirmBtn.addEventListener("click", deleteReview);
 };
 
 const openEditReviewModal = (e, review) => {

@@ -1,4 +1,4 @@
-const staticCacheName = 'restaurant-cache-030';
+const staticCacheName = 'restaurant-cache-031';
 // Note: use following command in devtools console to force unreigstration of current service worker 
 //////
 ////// navigator.serviceWorker.getRegistration().then(function(r){r.unregister();});
