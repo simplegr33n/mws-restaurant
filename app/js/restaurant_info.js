@@ -146,17 +146,21 @@ fillReviewsHTML = (error, reviews) => {
 		console.log('Error getting reviews: ', error);
 	}
 	const header = document.getElementById('reviews-header');
-	const title = document.createElement('h2');
-	title.innerHTML = 'Reviews';
-	header.appendChild(title);
 
-	const addReviewButton = document.createElement('button');
-	addReviewButton.classList.add('add-review-btn');
-	addReviewButton.innerHTML = '+ Add Review';
-	addReviewButton.setAttribute('aria-label', 'add review');
-	addReviewButton.title = 'Add Review';
-	addReviewButton.addEventListener('click', openAddReviewModal);
-	header.appendChild(addReviewButton);
+	var x = document.getElementsByClassName('add-review-btn');
+
+	if (x.length < 1) {
+		const title = document.createElement('h2');
+		title.innerHTML = 'Reviews';
+		header.appendChild(title);
+		const addReviewButton = document.createElement('button');
+		addReviewButton.classList.add('add-review-btn');
+		addReviewButton.innerHTML = '+ Add Review';
+		addReviewButton.setAttribute('aria-label', 'add review');
+		addReviewButton.title = 'Add Review';
+		addReviewButton.addEventListener('click', openAddReviewModal);
+		header.appendChild(addReviewButton);
+	}
 
 	const container = document.getElementById('reviews-container');
 
@@ -242,7 +246,7 @@ const addReview = (event) => {
 	if (form.checkValidity()) {
 		console.log('is valid');
 
-		const restaurant_id = self.restaurant._id;
+		const restaurant_id = self.restaurant.id;
 		const name = document.querySelector('#reviewName').value;
 		const rating = document.querySelector('input[name=rate]:checked').value;
 		const comments = document.querySelector('#reviewComments').value;
@@ -355,4 +359,65 @@ const closeAddReviewModal = () => {
 
 	// Set focus back to element that had it before the modal was opened
 	focusBeforeModal.focus();
+};
+
+
+// allows a11y & keyboard nav
+const navRadioGroup = (evt) => {
+	const star1 = document.getElementById('star1');
+	const star2 = document.getElementById('star2');
+	const star3 = document.getElementById('star3');
+	const star4 = document.getElementById('star4');
+	const star5 = document.getElementById('star5');
+
+	if (['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(evt.key)) {
+		evt.preventDefault();
+		if (evt.key === 'ArrowRight' || evt.key === 'ArrowDown') {
+			switch (evt.target.id) {
+				case 'star1':
+					star2.focus();
+					star2.checked = true;
+					break;
+				case 'star2':
+					star3.focus();
+					star3.checked = true;
+					break;
+				case 'star3':
+					star4.focus();
+					star4.checked = true;
+					break;
+				case 'star4':
+					star5.focus();
+					star5.checked = true;
+					break;
+				case 'star5':
+					star1.focus();
+					star1.checked = true;
+					break;
+			}
+		} else if (evt.key === 'ArrowLeft' || evt.key === 'ArrowUp') {
+			switch (evt.target.id) {
+				case 'star1':
+					star5.focus();
+					star5.checked = true;
+					break;
+				case 'star2':
+					star1.focus();
+					star1.checked = true;
+					break;
+				case 'star3':
+					star2.focus();
+					star2.checked = true;
+					break;
+				case 'star4':
+					star3.focus();
+					star3.checked = true;
+					break;
+				case 'star5':
+					star4.focus();
+					star4.checked = true;
+					break;
+			}
+		}
+	}
 };
