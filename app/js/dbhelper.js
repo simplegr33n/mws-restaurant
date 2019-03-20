@@ -18,7 +18,7 @@ const idbApp = (function () {
 		switch (upgradeDb.oldVersion) {
 			case 0:
 				upgradeDb.createObjectStore('restaurants', { keyPath: 'id' })
-					.createIndex("is_favorite", "is_favorite");
+					.createIndex("is_favourite", "is_favourite");
 			case 1:
 				upgradeDb.createObjectStore('reviews', { keyPath: 'id' })
 					.createIndex("restaurant_id", "restaurant_id");
@@ -352,7 +352,7 @@ class DBHelper {
 	 * Fetch restaurant reviews by rest id
 	 */
 	static fetchRestaurantReviewsById(id, callback) {
-		fetch(DBHelper.DATABASE_URL + `/reviews/?restaurant_id=${id}`)
+		fetch(DBHelper.DATABASE_URL + `/reviews?restaurant_id=${id}`)
 			.then(response => response.json())
 			.then(data => callback(null, data))
 			.catch(err => callback(err, null));
@@ -578,9 +578,9 @@ class DBHelper {
 							return tx.complete;
 						})
 							.then(() => {
-								// test if this is a review or favorite update
+								// test if this is a review or favourite update
 								if (review_key === undefined) {
-									console.log('Favorite posted to server.');
+									console.log('Favourite posted to server.');
 								} else {
 									// 2. Add new review record to reviews store
 									// 3. Delete old review record from reviews store 
