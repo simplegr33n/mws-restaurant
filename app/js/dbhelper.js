@@ -45,6 +45,32 @@ const idbApp = (function () {
 		});
 	}
 
+	function addAllReviews(reviews) {
+		//console.log("adding all restaurants");
+		reviews.forEach((review) => {
+			addReviewById(review) // put the JSON restaurants in store 
+		});
+
+		console.log("Add all reviews!");
+
+	}
+
+	function addReviewById(review) {
+		console.log("review!! : " + review.id);
+
+		return dbPromise.then(function (db) {
+			const tx = db.transaction('reviews', 'readwrite');
+			const store = tx.objectStore('reviews');
+			store.put(review);
+			return tx.complete;
+		}).catch(function (error) {
+			// tx.abort();
+			console.log("Failed adding review to IndexedDB", error);
+		});
+
+
+	}
+
 	function fetchRestaurantById(id) {
 		return dbPromise.then(function (db) {
 			const tx = db.transaction('restaurants');
@@ -62,6 +88,8 @@ const idbApp = (function () {
 		dbPromise: (dbPromise),
 		addRestaurantById: (addRestaurantById),
 		addAllRestaurants: (addAllRestaurants),
+		addReviewById: (addReviewById),
+		addAllReviews: (addAllReviews),
 		fetchRestaurantById: (fetchRestaurantById),
 	};
 })();
@@ -103,6 +131,9 @@ const idbKeyVal = {
 		});
 	},
 	setReturnId(store, val) {
+
+		console.log("store/val: " + store + "/" + val);
+
 		return idbApp.dbPromise.then(db => {
 			const tx = db.transaction(store, 'readwrite');
 			const pk = tx
@@ -186,6 +217,19 @@ class DBHelper {
 				console.log("Bad fetch of restaurants!");
 				const errorMessage = (`Request failed. Returned status of ${error}`);
 				callback(errorMessage, null);
+			});
+	}
+
+	static fetchReviews() {
+
+		fetch(`${DBHelper.DATABASE_URL}/reviews`)
+			.then(response => response.json())
+			.then(function (jsonResponse) {
+				console.log("Fetched reviews!" + jsonResponse.length);
+				idbApp.addAllReviews(jsonResponse);
+			})
+			.catch(function (error) {
+				console.log("Bad fetch of reviews!");
 			});
 	}
 

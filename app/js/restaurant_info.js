@@ -150,14 +150,14 @@ fillReviewsHTML = (error, reviews) => {
 		console.log('Error getting reviews: ', error);
 	}
 	const header = document.getElementById('reviews-header');
-	var x = document.getElementsByClassName('add-review-btn');
+	var x = document.getElementById('add-review-btn');
 
-	if (x.length < 1) {
+	if (x == null) {
 		const title = document.createElement('h2');
 		title.innerHTML = 'Reviews';
 		header.appendChild(title);
 		const addReviewButton = document.createElement('button');
-		addReviewButton.classList.add('add-review-btn');
+		addReviewButton.id = 'add-review-btn';
 		addReviewButton.innerHTML = '+ Add Review';
 		addReviewButton.setAttribute('aria-label', 'add review');
 		addReviewButton.title = 'Add Review';
@@ -168,6 +168,7 @@ fillReviewsHTML = (error, reviews) => {
 	const container = document.getElementById('reviews-container');
 
 	const reviewsList = document.getElementById('reviews-list');
+	// CLEAR previous review list
 	reviewsList.innerHTML = "";
 
 
@@ -303,8 +304,8 @@ const addReview = (event) => {
 				console.log('Received updated record from server', review);
 				DBHelper.createIDBReview(review); // write record to local IndexedDB store
 			}
-
-			DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
+		//DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
+		getIDBReviews(restaurant_id);
 			closeAddReviewModal();
 
 		});
@@ -343,8 +344,8 @@ const editReview = (e) => {
 				console.log('Received updated record from server', review);
 				DBHelper.updateIDBReview(review_id, restaurant_id, review);
 			}
-
-			DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
+		//DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
+		getIDBReviews(restaurant_id);
 			closeEditReviewModal();
 
 		});
@@ -359,23 +360,27 @@ const deleteReview = (e) => {
 	DBHelper.deleteRestaurantReview(review_id, restaurant_id, (error, result) => {
 		console.log('got delete callback');
 		if (error) {
-			showOffline();
+			//showOffline();
 		} else {
 			console.log(result);
 			DBHelper.delIDBReview(review_id, restaurant_id);
 		}
-		DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
+		//DBHelper.fetchRestaurantReviewsById(restaurant_id, fillReviewsHTML);
+		getIDBReviews(restaurant_id);
+
 		closeConfirmDeleteModal();
 	});
+
+	getIDBReviews(restaurant_id);
 };
 
-const getIDBReviews = function (restaurant_id) {
+function getIDBReviews(restaurant_id) {
 	idbKeyVal.getAllIdx('reviews', 'restaurant_id', restaurant_id)
 		.then(reviews => {
-			// console.log(reviews);
+			console.log(reviews);
 			fillReviewsHTML(null, reviews);
-			closeConfirmDeleteModal();
-			document.getElementById('review-add-btn').focus();
+			//closeConfirmDeleteModal();
+			document.getElementById('add-review-btn').focus();
 		});
 };
 
