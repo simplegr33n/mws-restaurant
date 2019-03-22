@@ -1,3 +1,8 @@
+// Note: use following command in DevTools console to force unreigstration of current service worker 
+//////
+////// navigator.serviceWorker.getRegistration().then(function(r){r.unregister();});
+//////
+
 const staticCacheName = 'restrev-static-v1';
 const dynamicMapsCacheName = 'restrev-dynamic-maps-v1';
 const dynamicImagesCacheName = 'restrev-dynamic-images-v1';
