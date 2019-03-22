@@ -4,7 +4,7 @@
 
 **Gulp** is used as the default task runner. Run the following commands to start the project:
 
-**in /_server/ dir:**
+**in /server/ dir:**
 ```
 npm install
 node server
