@@ -1,12 +1,22 @@
-# Mobile Web Specialist Certification Course
----
-#### _Three Stage Course Material Project - Restaurant Reviews_
+# MWS - Stage 3
 
-## Project Overview: Stage 3
+## To Install:
 
-# To Start:
-* Clone and start the accompanying server: https://github.com/udacity/mws-restaurant-stage-3
-* Clone this repo
-* **npm i** in the repos directory to install packages
-* **gulp** to generate a dist build
-* **gulp dist** to serve dist build
+**Gulp** is used as the default task runner. Run the following commands to start the project:
+
+**in /_server/ dir:**
+```
+npm install
+node server
+```
+to run the backend server.
+
+
+**then, in base dir:**
+```
+npm install
+npm start
+```
+to run the front end.
+
+The application will be running on http://localhost:8000/
